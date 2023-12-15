@@ -112,7 +112,7 @@ const GenBarcode = ({ data, dispatch }) => {
       {data.isGenBarcode && (
         <div className="bar-code-container" ref={pdfContainerRef}>
           <button className={styles.printButton} onClick={handleDownloadImage}>
-            <img src="print.svg" alt="Print" width="24" height="24" />
+            <Image src="print.svg" alt="Print" width="24" height="24" />
           </button>
           {data.recordsArray.map((item, index) => (
             <div key={index} className={styles.barCode} ref={printRef}>
