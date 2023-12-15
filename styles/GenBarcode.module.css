@@ -1,0 +1,80 @@
+.gen_form {
+    background: white;
+    border: 1px solid #dedede;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    margin: 0 auto;
+    width: 500px;
+    padding: 30px 50px;
+}
+
+.gen_subtitle {
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 12px;
+}
+
+.gen_text {
+    text-align: center;
+    font-size: 14px;
+    color: #666666;
+}
+
+.gen_input {
+    border: 1px solid #D1D1D1;
+    border-radius: 4px;
+    box-sizing: border-box;
+    padding: 10px;
+    width: 100%;
+}
+
+.gen_label {
+    color: #3d3d3d;
+    display: block;
+    font-family: sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.error {
+    color: red;
+    font-family: sans-serif;
+    font-size: 12px;
+    height: 30px;
+}
+
+.button {
+    background-color: #0d6efd;
+    color: white;
+    border: 0px;
+    border-radius: 4rem;
+    font-family: sans-serif;
+    font-size: 16px;
+    padding: 8px 16px;
+    margin: 20px 0px;
+    cursor: pointer;
+}
+
+.printButton {
+    border: 3px solid #0d6efd;
+    background: white;
+    border-radius: 4rem;
+    font-family: sans-serif;
+    padding: 8px 16px;
+    margin: 20px 0px;
+    cursor: pointer;
+}
+
+.printButton:hover {
+    background-color: #0d6efd;
+}
+
+.barCode > * {
+    text-align: center;
+    font-weight: 400;
+    font-size: 16px;
+}
