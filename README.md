@@ -1,7 +1,4 @@
-## Drag and Drop File Upload Component In Next.js
-
-This is a simple nextjs component that allows you to drag and drop or select files for upload.
-Implimented using the native HTML5 drag and drop API, JS FileReader API and browser Fetch API, no external libraries used.
+## Bar Code Generate with CSV & Excel In Next.js
 
 ## Getting Started
 
