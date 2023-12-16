@@ -1,16 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Document, Page, pdfjs } from "react-pdf";
 import styles from "../styles/GenBarcode.module.css";
 import Barcode from "react-barcode";
 import Image from "next/image";
 import html2canvas from "html2canvas";
-import { useReactToPrint } from "react-to-print";
+import jsPDF from "jspdf";
 
 const GenBarcode = ({ data, dispatch }) => {
   const printRef = React.useRef();
   const pdfContainerRef = React.useRef();
-
-  pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
   const textStyle = {
     textAlign: "center",
@@ -23,10 +20,12 @@ const GenBarcode = ({ data, dispatch }) => {
         <div style={textStyle}>
           <Barcode
             value={barcodeValue}
+            fontSize={12}
             lineColor="#000000"
             background="#FFFFFF"
-            width={1.5}
-            height={40}
+            width={1}
+            height={28}
+            margin={4}
           />
         </div>
       </>
@@ -37,48 +36,41 @@ const GenBarcode = ({ data, dispatch }) => {
   };
 
   const handleDownloadImage = async () => {
+    const pdf = new jsPDF({
+      unit: "mm",
+      format: [25, 54],
+    });
+
+    // Get the container element for rendering
     const pdfContainer = pdfContainerRef.current;
+
     const elements = pdfContainer.getElementsByClassName(styles.barCode);
-    const promises = Array.from(elements).map(async (element, index) => {
+
+    console.log("elements: ", elements);
+
+    for (let index = 0; index < elements.length; index++) {
+      const element = elements[index];
       const canvas = await html2canvas(element);
-      return canvas.toDataURL("image/jpg");
-    });
 
-    console.log("promises: ", promises);
+      // Rotate the canvas by -90 degrees
+      const rotatedCanvas = document.createElement("canvas");
+      rotatedCanvas.width = canvas.height;
+      rotatedCanvas.height = canvas.width;
+      const rotatedContext = rotatedCanvas.getContext("2d");
+      rotatedContext.translate(0, rotatedCanvas.height + 8);
+      rotatedContext.rotate(-Math.PI / 2);
+      rotatedContext.drawImage(canvas, 4, 4);
 
-    Promise.all(promises).then((barcodeImages) => {
-      const pageWidth = 600;
-      const pageHeight = 400;
-      const imagesPerPage = 2;
-
-      console.log("barcodeImages", barcodeImages);
-      const pdfContent = (
-        <Document>
-          {barcodeImages.map((barcode, index) => (
-            <Page key={index} size={{ width: pageWidth, height: pageHeight }}>
-              <Image
-                src={barcode.imageDataUrl}
-                alt={`Barcode ${index + 1}`}
-                width={barcode.width}
-                height={barcode.height}
-              />
-              {index % imagesPerPage === imagesPerPage - 1 && <br />}{" "}
-              {/* Add a line break after every 2 barcodes */}
-            </Page>
-          ))}
-        </Document>
-      );
-      
-      const link = document.createElement("a");
-      link.download = "barcode.pdf";
-      link.href = URL.createObjectURL(
-        new Blob([pdfContent], { type: "application/pdf" })
-      );
-
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    });
+      // Convert the canvas to a data URL
+      const imgData = rotatedCanvas.toDataURL("image/png");
+      // Add the image to the PDF
+      if (index > 0) {
+        pdf.addPage();
+      }
+      pdf.addImage(imgData, "PNG", 0, 0);
+    }
+    // Save or download the PDF
+    pdf.save("barcode_document.pdf");
   };
 
   return (
@@ -112,7 +104,7 @@ const GenBarcode = ({ data, dispatch }) => {
       {data.isGenBarcode && (
         <div className="bar-code-container" ref={pdfContainerRef}>
           <button className={styles.printButton} onClick={handleDownloadImage}>
-            <Image src="print.svg" alt="Print" width="24" height="24" />
+            <img src="print.svg" alt="Print" width="24" height="24" />
           </button>
           {data.recordsArray.map((item, index) => (
             <div key={index} className={styles.barCode} ref={printRef}>
