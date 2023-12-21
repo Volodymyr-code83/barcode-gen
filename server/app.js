@@ -18,7 +18,7 @@ app.use(express.static("public")); // To serve static files
 
 app.post("/generateBarcode", (req, res) => {
   const data = req.body.data;
-  text = data[0].EANBarcode;
+
   let doc = new PDFDocument({ size: [54, 25] });
   const fontSize = 3;
   doc.fontSize(fontSize);
@@ -30,11 +30,12 @@ app.post("/generateBarcode", (req, res) => {
     let line1 = item.Name;
     let line2 = item.SKU;
 
-    if (line1.length > 45) {
-      line1 = line1.slice(0, 45) + "..."; // Truncate and add ellipsis
+    if (line1.length > 33) {
+      line1 = line1.slice(0, 33) + "..."; // Truncate and add ellipsis
     }
-    if (line2.length > 45) {
-      line2 = line2.slice(0, 35) + "..."; // Truncate and add ellipsis
+    console.log("line1: ", line1);
+    if (line2.length > 30) {
+      line2 = line2.slice(0, 30) + "..."; // Truncate and add ellipsis
     }
 
     let svg = bwipjs.toSVG({
@@ -44,6 +45,7 @@ app.post("/generateBarcode", (req, res) => {
       includetext: true,
       textalign: "center",
       textcolor: "000000",
+      textsize: 8,
     });
     if (svg) {
       try {
