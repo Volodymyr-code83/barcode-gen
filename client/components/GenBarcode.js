@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from "../styles/GenBarcode.module.css";
 import Barcode from "react-barcode";
-import Image from "next/image";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
+import axios from "axios";
 
 const GenBarcode = ({ data, dispatch }) => {
   const printRef = React.useRef();
@@ -32,45 +30,32 @@ const GenBarcode = ({ data, dispatch }) => {
     );
   };
   const generateBarcode = (e) => {
+    console.log("generateBarcode!!!");
+    axios
+      .post(
+        "http://localhost:5000/generateBarcode",
+        {
+          data: data.recordsArray,
+        },
+        {
+          responseType: "blob",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((response) => {
+        const blob = response.data;
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "barcode.pdf";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      })
+      .catch((error) => console.error("Error:", error));
+
     dispatch({ type: "SET_GEN_BARCODE", isGenBarcode: true });
-  };
-
-  const handleDownloadImage = async () => {
-    const pdf = new jsPDF({
-      unit: "mm",
-      format: [25, 54],
-    });
-
-    // Get the container element for rendering
-    const pdfContainer = pdfContainerRef.current;
-
-    const elements = pdfContainer.getElementsByClassName(styles.barCode);
-
-    console.log("elements: ", elements);
-
-    for (let index = 0; index < elements.length; index++) {
-      const element = elements[index];
-      const canvas = await html2canvas(element);
-
-      // Rotate the canvas by -90 degrees
-      const rotatedCanvas = document.createElement("canvas");
-      rotatedCanvas.width = canvas.height;
-      rotatedCanvas.height = canvas.width;
-      const rotatedContext = rotatedCanvas.getContext("2d");
-      rotatedContext.translate(0, rotatedCanvas.height + 8);
-      rotatedContext.rotate(-Math.PI / 2);
-      rotatedContext.drawImage(canvas, 4, 4);
-
-      // Convert the canvas to a data URL
-      const imgData = rotatedCanvas.toDataURL("image/png");
-      // Add the image to the PDF
-      if (index > 0) {
-        pdf.addPage();
-      }
-      pdf.addImage(imgData, "PNG", 0, 0);
-    }
-    // Save or download the PDF
-    pdf.save("barcode_document.pdf");
   };
 
   return (
@@ -103,9 +88,6 @@ const GenBarcode = ({ data, dispatch }) => {
 
       {data.isGenBarcode && (
         <div className="bar-code-container" ref={pdfContainerRef}>
-          <button className={styles.printButton} onClick={handleDownloadImage}>
-            <img src="print.svg" alt="Print" width="24" height="24" />
-          </button>
           {data.recordsArray.map((item, index) => (
             <div key={index} className={styles.barCode} ref={printRef}>
               <BarcodeWithText
