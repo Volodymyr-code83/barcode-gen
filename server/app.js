@@ -33,12 +33,12 @@ app.post("/generateBarcode", (req, res) => {
     if (line1.length > 33) {
       line1 = line1.slice(0, 33) + "..."; // Truncate and add ellipsis
     }
-    console.log("line1: ", line1);
+
     if (line2.length > 30) {
       line2 = line2.slice(0, 30) + "..."; // Truncate and add ellipsis
     }
 
-    let svg = bwipjs.toSVG({
+    let svg = bwipjs.toSVG({ 
       bcid: "code128",
       text: text.toString(),
       height: 10,
@@ -46,6 +46,8 @@ app.post("/generateBarcode", (req, res) => {
       textalign: "center",
       textcolor: "000000",
       textsize: 8,
+      scaleX: 1,
+      scaleY: 1,
     });
     if (svg) {
       try {
@@ -62,7 +64,7 @@ app.post("/generateBarcode", (req, res) => {
 
         SVGtoPDF(doc, svg, 0, 3);
       } catch (error) {
-        console.error("SVGtoPDF error:", error.message);
+        console.error("SVGtoPDF errorrrr: ", error.message);
       }
     } else {
       console.error("Failed to convert PNG to SVG");

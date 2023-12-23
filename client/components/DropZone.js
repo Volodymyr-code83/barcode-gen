@@ -6,9 +6,8 @@ import Papa from "papaparse";
 import readXlsxFile from "read-excel-file";
 
 const DropZone = ({ data, dispatch }) => {
-  console.log("DropZone data: ", data);
   const [isGenBarcode, setIsGenBarcode] = useState(false);
-  // onDragEnter sets inDropZone to true
+
   const handleDragEnter = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -73,7 +72,7 @@ const DropZone = ({ data, dispatch }) => {
 
   // Function to handle CSV file parsing
   const parseCSV = (file) => {
-    console.log("Here is parseCSV");
+
     return new Promise((resolve) => {
       Papa.parse(file, {
         header: true,
@@ -129,7 +128,6 @@ const DropZone = ({ data, dispatch }) => {
       dispatch({ type: "ADD_RECORDS_ARRAY", recordsArray });
     }
 
-    console.log("recordsArray: ", recordsArray);
     dispatch({ type: "CLEAR_FILE_LIST" });
     window.scroll(0, window.scrollY + 1000);
   };

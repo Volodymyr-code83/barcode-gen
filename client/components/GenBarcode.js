@@ -30,7 +30,7 @@ const GenBarcode = ({ data, dispatch }) => {
     );
   };
   const generateBarcode = (e) => {
-    console.log("generateBarcode!!!");
+
     axios
       .post(
         "http://localhost:5000/generateBarcode",
@@ -91,8 +91,8 @@ const GenBarcode = ({ data, dispatch }) => {
           {data.recordsArray.map((item, index) => (
             <div key={index} className={styles.barCode} ref={printRef}>
               <BarcodeWithText
-                text1={item.Name.toString()}
-                text2={item.SKU.toString()}
+                text1={item.Name.length > 33 ? item.Name.slice(0, 33) + "..." : item.Name.toString()}
+                text2={item.SKU.length > 33 ? item.Name.slice(0, 33) + "..." : item.SKU.toString()}
                 barcodeValue={item.EANBarcode.toString()}
               />
             </div>
